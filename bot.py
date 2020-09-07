@@ -1,7 +1,7 @@
 from discord.ext import commands
 from configuration import CONFIG, PREFIX
 from database import DB
-import os
+import os, sys
 from pathlib import Path
 
 print('Using `{}` as command token.'.format(PREFIX))
@@ -15,4 +15,8 @@ for f in os.listdir(cmd_path):
 
 
 print('All aboard!')
-bot.run(CONFIG['discord_client_secret'])
+if '-c' in sys.argv:
+    import code
+    code.interact(local=dict(globals(), **locals()))
+else:
+    bot.run(CONFIG['discord_client_secret'])
