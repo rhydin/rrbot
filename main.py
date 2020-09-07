@@ -1,18 +1,27 @@
+"""
+rrbot
+TODO: a good description
+"""
 from discord.ext import commands
 from configuration import CONFIG, PREFIX
 from database import DB
-import os, sys
-from pathlib import Path
+import sys
+from bot_utils import load_extension_directory
+
+
+# output some boot up information
 
 print('Using `{}` as command token.'.format(PREFIX))
 bot = commands.Bot(command_prefix=PREFIX)
 
-cmd_path = os.path.join(os.getcwd(), 'commands')
-for f in os.listdir(cmd_path):
-    if f == '__init__.py' or not f.endswith('.py'):
-        continue
-    bot.load_extension('commands.{}'.format(Path(f).stem))
 
+# load the extensions
+
+for ext in ['commands', 'events']:
+    load_extension_directory(bot, ext)
+
+
+# go live
 
 print('All aboard!')
 if '-c' in sys.argv:
