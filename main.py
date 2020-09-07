@@ -4,7 +4,7 @@ TODO: a good description
 """
 
 import sys, logging
-logging.basicConfig(filename='logs/main.log', filemode='w', level=logging.DEBUG)
+logging.basicConfig(filename='logs/main.log', filemode='w', level=logging.DEBUG, format='[%(asctime)s|%(levelname)s]: %(message)s')
 
 from discord.ext import commands
 from configuration import CONFIG, PREFIX
