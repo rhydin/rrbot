@@ -1,7 +1,7 @@
 from configuration import ADMINS
 from discord.ext import commands
 from pathlib import Path
-import os, sys
+import os, sys, logging
 
 """
 Core utlities

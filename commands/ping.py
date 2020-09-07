@@ -1,6 +1,7 @@
 from discord.ext import commands
+import logging
 
-print('Loading `ping`')
+logging.info('Loading `ping`')
 
 @commands.command(name='ping')
 async def ping(ctx):
