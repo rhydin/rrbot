@@ -1,0 +1,33 @@
+"""
+
+HACK: this is a temporary shim to get started.  We can circle back
+      and use a more robust module later that will check for ENV
+      variables that override, or whatever.
+
+Copy this file to `configuration.py` then edit that file
+to match your local environment variables.
+
+"""
+import yaml
+
+CONFIG = yaml.load("""
+---
+database_url: 'postgres:///...'
+discord_client_id: 1234567890
+discord_client_secret: 'put your token here'
+default_command_prefix: '='
+admins:
+  - 290829729458814977 # Q
+  - 376200817054842882 # Babs
+  - 610335542780887050 # Midnight
+  - 158406380162646016 # Omnilord
+  - 250138180718821376 # Hellz
+  - 715057045211971685 # Aten
+""", Loader=yaml.FullLoader)
+
+PREFIX = CONFIG['default_command_prefix'].lower()
+TOKEN = CONFIG['discord_client_secret']
+ADMINS = CONFIG['admins']
+
+if __name__ == "__main__":
+    print(CONFIG)

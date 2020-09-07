@@ -1,0 +1,4 @@
+**.sw*
+**/tmp
+**/__pycache__
+configuration.py
