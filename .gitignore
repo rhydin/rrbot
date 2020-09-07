@@ -1,4 +1,5 @@
 **.sw*
 **/tmp
+**/logs/*.log
 **/__pycache__
 configuration.py
