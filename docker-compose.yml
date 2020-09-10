@@ -1,0 +1,26 @@
+version: '3'
+
+# !!! DO NOT USE FOR PRODUCTION !!!
+# !!! DO NOT USE FOR PRODUCTION !!!
+#
+# This is meant for development on localhost only
+#
+# !!! DO NOT USE FOR PRODUCTION !!!
+# !!! DO NOT USE FOR PRODUCTION !!!
+
+services:
+  db:
+    image: mysql:latest
+    ports:
+      - "0.0.0.0:3306:3306"
+    volumes:
+      - rrbot_mysql:/var/lib/mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: garbage_collection
+      MYSQL_DATABASE: rrbot
+      MYSQL_USER: rrbot
+      MYSQL_PASSWORD: rrbot
+
+volumes:
+  rrbot_mysql:

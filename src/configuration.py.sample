@@ -9,10 +9,14 @@ to match your local environment variables.
 
 """
 import yaml
+from pathlib import Path
 
+ROOT = Path(__file__).parent.absolute().parent
 CONFIG = yaml.load("""
 ---
-database_url: 'postgres:///...'
+# For localhost development, this is fine since it's a docker container
+# CHANGE FOR PRODUCTION
+database_url: 'mysql://rrbot:rrbot@localhost:3306/rrbot...'
 discord_client_id: 1234567890
 discord_client_secret: 'put your token here'
 default_command_prefix: '='
@@ -23,11 +27,18 @@ admins:
   - 158406380162646016 # Omnilord
   - 250138180718821376 # Hellz
   - 715057045211971685 # Aten
+mod_roles:
+  - 694253939734085732 # @staff
+log_level: 'INFO'
 """, Loader=yaml.FullLoader)
 
-PREFIX = CONFIG['default_command_prefix'].lower()
+DB_URL = CONFIG['database_url']
 TOKEN = CONFIG['discord_client_secret']
+PREFIX = CONFIG['default_command_prefix'].lower()
 ADMINS = CONFIG['admins']
+LOG_LEVEL = CONFIG['log_level']
+
+CONFIG['rootpath'] = ROOT
 
 if __name__ == "__main__":
     print(CONFIG)

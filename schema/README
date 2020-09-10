@@ -1,0 +1,3 @@
+Let's not use foreign keys in the database at the moment, make things simple and only do relationships in code.
+
+We can revisit later if we absolutely need absolute data integrity.

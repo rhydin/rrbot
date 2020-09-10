@@ -1,3 +1,7 @@
 discord
 nop
 pyyaml
+mysqlclient
+pymysql
+sqlalchemy
+alembic
