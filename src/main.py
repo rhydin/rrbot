@@ -3,11 +3,11 @@ rrbot
 TODO: a good description
 """
 
-from configuration import CONFIG, LOG_LEVEL, PREFIX
-import sys, logging
+from configuration import CONFIG, LOG_LEVEL, PREFIX, ROOT
+import os, sys, logging
 
 logging.basicConfig(
-        filename='logs/main.log',
+        filename=f'{ROOT}/logs/main.log',
         filemode='w',
         level=getattr(logging, LOG_LEVEL),
         format='[%(asctime)s|%(levelname)s]%(filename)s@L%(lineno)d - %(message)s'
