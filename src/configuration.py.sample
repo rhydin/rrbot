@@ -11,7 +11,6 @@ to match your local environment variables.
 import yaml
 from pathlib import Path
 
-ROOT = Path(__file__).parent.absolute().parent
 CONFIG = yaml.load("""
 ---
 # For localhost development, this is fine since it's a docker container
@@ -32,13 +31,33 @@ mod_roles:
 log_level: 'INFO'
 """, Loader=yaml.FullLoader)
 
+CONFIG['rootpath'] = ROOT     = Path(__file__).parent.absolute().parent
+CONFIG['srcpath']  = SRC      = os.path.join(ROOT, 'src')
+CONFIG['prefixes'] = PREFIXES = {}
+
 DB_URL = CONFIG['database_url']
 TOKEN = CONFIG['discord_client_secret']
 PREFIX = CONFIG['default_command_prefix'].lower()
 ADMINS = CONFIG['admins']
 LOG_LEVEL = CONFIG['log_level']
 
-CONFIG['rootpath'] = ROOT
+
+def update_live_prefix(id, prefix):
+    global PREFIXES
+    print(PREFIXES)
+    current_prefix = PREFIXES.get(id, None)
+    print('Update Prefix {} => {}, old => {}'.format(id, prefix, current_prefix))
+    if prefix != current_prefix:
+        print("Differs")
+        if prefix is None:
+            print('NONE')
+            PREFIXES.delete(id)
+        else:
+            print('CHANGE')
+            PREFIXES[id] = prefix
+    else:
+        print('DAFUQ\n???\n???\n???')
+
 
 if __name__ == "__main__":
     print(CONFIG)

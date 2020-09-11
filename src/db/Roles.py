@@ -3,7 +3,7 @@ from . import Base
 
 class Roles(Base):
     __tablename__ = 'roles'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True, autoincrement=False)
 
     # Allows this role to interact with this bot even if a
     # channel or server are muted.

@@ -3,7 +3,7 @@ import logging
 
 logging.info('Loading `ping`')
 
-@commands.command(name='ping')
+@commands.command()
 async def ping(ctx):
     await ctx.send('Pong!')
 

@@ -13,15 +13,22 @@ logging.basicConfig(
         format='[%(asctime)s|%(levelname)s]%(filename)s@L%(lineno)d - %(message)s'
 )
 
+
+# verify the database
+from db import db_test
+db_test()
+
+
+# start building the bot up
 from discord.ext import commands
-from database import DB
-from bot_utils import load_extension_directory
+from bot_utils import load_extension_directory, load_prefixes, prefix_operator
 
 
 # output some boot up information
 
-logging.info('Using `{}` as command token.'.format(PREFIX))
-bot = commands.Bot(command_prefix=PREFIX)
+logging.info('Using `{}` as default command token.'.format(PREFIX))
+load_prefixes()
+bot = commands.Bot(command_prefix=prefix_operator)
 
 
 # load the extensions

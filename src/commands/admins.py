@@ -1,5 +1,6 @@
 from discord.ext import commands
-from bot_utils import _is_bot_admin
+from bot_utils import _is_bot_admin, db_session
+from db import ensure_server, ensure_channel
 import logging
 
 logging.info('Loading `admin commands`')
@@ -17,9 +18,28 @@ class AdminCog(commands.Cog, name='Bot Administrator Commands'):
         logging.info(ctx.message.content)
         return _is_bot_admin(id)
 
-    @commands.command(name='shutdown')
+    @commands.command()
     async def shutdown(self, ctx):
+        await ctx.send('Goodbye')
         await ctx.bot.logout()
+
+    @commands.command(aliases=['sprefix'])
+    @db_session()
+    async def prefix(self, ctx, prefix):
+        server = ensure_server(ctx.db, ctx.guild.id)
+        server.prefix = prefix
+        ctx.db.add(server)
+        ctx.db.commit()
+        await ctx.send('Server prefix is now {}'.format(prefix))
+
+    @commands.command()
+    @db_session()
+    async def cprefix(self, ctx, prefix):
+        channel = ensure_channel(ctx.db, ctx.channel.id)
+        channel.prefix = prefix
+        ctx.db.add(channel)
+        ctx.db.commit()
+        await ctx.send('{} prefix is now {}'.format(ctx.channel.mention, prefix))
 
 def setup(bot):
     bot.add_cog(AdminCog(bot))

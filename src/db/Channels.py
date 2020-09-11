@@ -1,9 +1,11 @@
-from sqlalchemy import ForeignKey, Column, Boolean, Integer, String, JSON
-from . import Base
+from sqlalchemy import ForeignKey, Column, Boolean, Integer, String, JSON, event
+from . import Base, prefixed, bot_session
+from configuration import update_live_prefix
 
+@prefixed
 class Channels(Base):
     __tablename__ = 'channels'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True, autoincrement=False)
 
     # override the Global and Server prefixes with a custom
     # prefix specific to this channel
@@ -21,3 +23,12 @@ class Channels(Base):
 
     # Storing Ad-hoc data made easy
     jsondata = Column(JSON)
+
+
+@event.listens_for(Channels, 'after_update')
+def receive_after_update(mapper, connection, channel):
+    update_live_prefix(channel.id, channel.prefix)
+
+@event.listens_for(Channels, 'after_insert')
+def receive_after_insert(mapper, connection, channel):
+    update_live_prefix(channel.id, channel.prefix)

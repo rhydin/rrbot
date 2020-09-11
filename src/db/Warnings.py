@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Integer, Text
+from sqlalchemy import ForeignKey, Column, Integer, Boolean, Text
 from . import Base
 
 class Warnings(Base):
@@ -23,7 +23,7 @@ class Warnings(Base):
     context = Column(Text, default='')
 
     # was this warning accompanied by a kick?
-    sa.Column('kicked', sa.Boolean, nullable=False, default=False)
+    kicked = Column(Boolean, nullable=False, default=False)
 
     # was this warning accompanied by a ban?
-    sa.Column('banned', sa.Boolean, nullable=False, default=False)
+    banned = Column(Boolean, nullable=False, default=False)

@@ -3,7 +3,7 @@ from . import Base
 
 class Users(Base):
     __tablename__ = 'users'
-    id = Column(Integer, primary_key = True)
+    id = Column(Integer, primary_key = True, autoincrement=False)
 
     # Allows this user to interact with this bot even if a
     # channel or server are muted.
