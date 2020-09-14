@@ -1,9 +1,9 @@
-from sqlalchemy import ForeignKey, Column, Boolean, Integer, String, JSON
+from sqlalchemy import ForeignKey, Column, Boolean, BigInteger, String, JSON
 from . import Base
 
 class Roles(Base):
     __tablename__ = 'roles'
-    id = Column(Integer, primary_key = True, autoincrement=False)
+    id = Column(BigInteger, primary_key = True, autoincrement=False)
 
     # Allows this role to interact with this bot even if a
     # channel or server are muted.

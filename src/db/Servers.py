@@ -1,11 +1,11 @@
-from sqlalchemy import ForeignKey, Column, Boolean, Integer, String, JSON, event
+from sqlalchemy import ForeignKey, Column, Boolean, BigInteger, String, JSON, event
 from . import Base, prefixed, bot_session
 from configuration import update_live_prefix
 
 @prefixed
 class Servers(Base):
     __tablename__ = 'servers'
-    id = Column(Integer, primary_key = True, autoincrement=False)
+    id = Column(BigInteger, primary_key = True, autoincrement=False)
 
     # override the Global prefix with a custom
     # prefix specific to this server

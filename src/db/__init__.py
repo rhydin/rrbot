@@ -42,7 +42,6 @@ from .Roles import Roles
 from .Servers import Servers
 from .Users import Users
 from .Warnings import Warnings
-Base.metadata.create_all(engine)
 
 
 """
