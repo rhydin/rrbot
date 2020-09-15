@@ -16,6 +16,7 @@ CONFIG = yaml.load("""
 # For localhost development, this is fine since it's a docker container
 # CHANGE FOR PRODUCTION
 database_url: 'mysql://rrbot:rrbot@localhost:3306/rrbot...'
+mqtt_url: 'localhost'
 discord_client_id: 1234567890
 discord_client_secret: 'put your token here'
 default_command_prefix: '='
@@ -36,6 +37,7 @@ CONFIG['srcpath']  = SRC      = os.path.join(ROOT, 'src')
 CONFIG['prefixes'] = PREFIXES = {}
 
 DB_URL = CONFIG['database_url']
+MQTT_URL = CONFIG['mqtt_url']
 TOKEN = CONFIG['discord_client_secret']
 PREFIX = CONFIG['default_command_prefix'].lower()
 ADMINS = CONFIG['admins']

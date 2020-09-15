@@ -36,6 +36,7 @@ bot = commands.Bot(command_prefix=prefix_operator)
 for ext in ['commands', 'events']:
     load_extension_directory(bot, ext)
 
+import mqtt_client
 
 # go live
 
