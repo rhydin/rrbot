@@ -1,6 +1,8 @@
 from discord.ext import commands
 from bot_utils import _is_bot_admin, db_session
-from db import ensure_server, ensure_channel
+from configuration import update_live_prefix
+from db import ensure_server, ensure_channel, Session, Servers, Channels
+from mqtt_client import register_setting_callback
 import logging
 
 logging.info('Loading `admin commands`')
@@ -43,3 +45,20 @@ class AdminCog(commands.Cog, name='Bot Administrator Commands'):
 
 def setup(bot):
     bot.add_cog(AdminCog(bot))
+
+async def set_prefix(data):
+    logging.info(f"Data received: {data}")
+    for prefix in data:
+        dkeys = prefix.keys()
+        session = Session()
+        if 'channel_id' in dkeys:
+            target = session.query(Channels).get(prefix['channel_id'])
+        elif 'server_id' in dkeys:
+            target = session.query(Servers).get(prefix['server_id'])
+        else:
+            target = None
+
+        if target and target.prefix == prefix.get('prefix', None):
+            update_live_prefix(target.id, target.prefix)
+
+register_setting_callback('prefix', set_prefix)

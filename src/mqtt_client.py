@@ -1,5 +1,5 @@
 import asyncio, json, re, logging, threading
-from configuration import MQTT_URL, update_live_prefix
+from configuration import MQTT_URL
 from asyncio_mqtt import Client, MqttError
 from db import Session, Servers, Channels
 
@@ -7,36 +7,23 @@ TOPIC_PREFIX = 'rrbot/settings'
 TOPIC_FILTER = f"{TOPIC_PREFIX}/+"
 TOPIC = re.compile(f'{TOPIC_PREFIX}/(?P<topic>.+)')
 MQTT_LIVE = True
+DISPATCH = {}
 
-async def set_prefix(data):
-    logging.info(f"Data received: {data}")
-    for prefix in data:
-        dkeys = prefix.keys()
-        session = Session()
-        if 'channel_id' in dkeys:
-            target = session.query(Channels).get(prefix['channel_id'])
-        elif 'server_id' in dkeys:
-            target = session.query(Servers).get(prefix['server_id'])
-        else:
-            target = None
-
-        if channel and channel.prefix == prefix.get('prefix', None):
-            update_live_prefix(channel.id, channel.prefix)
-
-
-DISPATCH = {
-    'prefix': set_prefix
-}
+def register_setting_callback(setting, callback):
+    if DISPATCH.get(setting, None) is None:
+        DISPATCH[setting] = [callback]
+    else:
+        DISPATCH[setting].append(callback)
 
 async def dispatch_message(message):
     m = TOPIC.match(message.topic)
     if m is None:
         return
-    fn = DISPATCH.get(m['topic'], lambda msg: None)
-    await fn(json.loads(message.payload.decode()))
+    fns = DISPATCH.get(m['topic'], [lambda msg: None])
+    [await fn(json.loads(message.payload.decode())) for fn in fns]
 
 
-async def mqtt_task(loop):
+async def mqtt_task():
     attempts = 1
     while MQTT_LIVE:
         try:
@@ -57,12 +44,13 @@ async def mqtt_task(loop):
 class MQTT_Thread(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
-        self.main_loop = asyncio.get_event_loop()
-        self.task = self.main_loop.create_task(mqtt_task(self.main_loop))
+        #self.main_loop = asyncio.get_event_loop()
+        #self.task = self.main_loop.create_task(mqtt_task())
 
     def run(self):
         logging.info(f"Prepped to listen for '{TOPIC_FILTER}' from '{MQTT_URL}'")
-        self.main_loop.run_until_complete(self.task())
+        #self.main_loop.run_until_complete(self.task())
+        asyncio.run(mqtt_task())
 
 mqtt_thread = MQTT_Thread();
 mqtt_thread.start()
