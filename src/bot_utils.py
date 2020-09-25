@@ -13,7 +13,7 @@ def load_extension_directory(bot, ext):
     for f in os.listdir(cmd_path):
         if f == '__init__.py' or not f.endswith('.py'):
             continue
-        bot.load_extension('commands.{}'.format(Path(f).stem))
+        bot.load_extension('{}.{}'.format(ext, Path(f).stem))
 
 def load_prefixes():
     global PREFIXES

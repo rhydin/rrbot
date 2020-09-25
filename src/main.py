@@ -42,6 +42,7 @@ import mqtt_client
 
 logging.info('All aboard!')
 if '-c' in sys.argv:
+    print('Notice: This is not a live connection to any asyncio resources.  Discord is not running, mqtt will not respond. Database is accessible, however.  This is a test console for base functionality only.')
     import code
     code.interact(local=dict(globals(), **locals()))
 else:

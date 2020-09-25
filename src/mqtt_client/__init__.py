@@ -1,4 +1,5 @@
-import asyncio, json, re, logging, threading
+import asyncio, json, re, logging, glob
+from os import path
 from configuration import MQTT_URL
 from asyncio_mqtt import Client, MqttError
 from db import Session, Servers, Channels
@@ -19,9 +20,9 @@ async def dispatch_message(message):
     m = TOPIC.match(message.topic)
     if m is None:
         return
-    fns = DISPATCH.get(m['topic'], [lambda msg: None])
-    [await fn(json.loads(message.payload.decode())) for fn in fns]
-
+    fns = DISPATCH.get(m['topic'], None)
+    if fns is not None:
+        [await fn(json.loads(message.payload.decode())) for fn in fns]
 
 async def mqtt_task():
     attempts = 1
@@ -30,8 +31,8 @@ async def mqtt_task():
             async with Client(MQTT_URL) as client:
                 logging.info(f'connected to client at {MQTT_URL}')
                 attmpts = 1
+                await client.subscribe(TOPIC_FILTER)
                 async with client.filtered_messages(TOPIC_FILTER) as messages:
-                    await client.subscribe(TOPIC_FILTER)
                     async for message in messages:
                         await dispatch_message(message)
         except MqttError as err:
@@ -41,16 +42,9 @@ async def mqtt_task():
         await asyncio.sleep(timeout)
         attempts += 1
 
-class MQTT_Thread(threading.Thread):
-    def __init__(self):
-        threading.Thread.__init__(self)
-        #self.main_loop = asyncio.get_event_loop()
-        #self.task = self.main_loop.create_task(mqtt_task())
 
-    def run(self):
-        logging.info(f"Prepped to listen for '{TOPIC_FILTER}' from '{MQTT_URL}'")
-        #self.main_loop.run_until_complete(self.task())
-        asyncio.run(mqtt_task())
+for f in glob.glob(path.join(path.dirname(__file__), "*.py")):
+    if path.isfile(f) and not f.endswith('__init__.py'):
+        __import__(f"mqtt_client.{path.basename(f)[:-3]}")
 
-mqtt_thread = MQTT_Thread();
-mqtt_thread.start()
+asyncio.ensure_future(mqtt_task())
