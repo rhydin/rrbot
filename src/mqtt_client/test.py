@@ -1,6 +1,6 @@
-from . import register_setting_callback
+from . import setting_callback
 
+@setting_callback('test')
 async def testing(data):
     print(data)
 
-register_setting_callback('test', testing)

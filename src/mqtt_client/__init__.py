@@ -16,10 +16,20 @@ def register_setting_callback(setting, callback):
     else:
         DISPATCH[setting].append(callback)
 
+def setting_callback(name):
+    """
+    decoractor for registering a function as an MQTT setting callback
+    """
+    def predicate(func):
+        register_setting_callback(name, func)
+        return func
+    return predicate
+
 async def dispatch_message(message):
     m = TOPIC.match(message.topic)
     if m is None:
         return
+
     fns = DISPATCH.get(m['topic'], None)
     if fns is not None:
         [await fn(json.loads(message.payload.decode())) for fn in fns]
@@ -30,7 +40,7 @@ async def mqtt_task():
         try:
             async with Client(MQTT_URL) as client:
                 logging.info(f'connected to client at {MQTT_URL}')
-                attmpts = 1
+                attempts = 1
                 await client.subscribe(TOPIC_FILTER)
                 async with client.filtered_messages(TOPIC_FILTER) as messages:
                     async for message in messages:

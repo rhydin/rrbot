@@ -1,8 +1,9 @@
 import logging
 from configuration import update_live_prefix
 from db import Session, Servers, Channels
-from . import register_setting_callback
+from . import setting_callback
 
+@setting_callback('prefix')
 async def set_prefix(data):
     logging.info(f"Data received: {data}")
     for prefix in data:
@@ -17,5 +18,3 @@ async def set_prefix(data):
 
         if target and target.prefix == prefix.get('prefix', None):
             update_live_prefix(target.id, target.prefix)
-
-register_setting_callback('prefix', set_prefix)
