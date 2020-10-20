@@ -3,7 +3,7 @@ rrbot
 TODO: a good description
 """
 
-from configuration import CONFIG, LOG_LEVEL, PREFIX, ROOT
+from configuration import TOKEN, LOG_LEVEL, PREFIX, ROOT
 import os, sys, logging
 
 logging.basicConfig(
@@ -20,6 +20,7 @@ db_test()
 
 
 # start building the bot up
+from discord import Intents
 from discord.ext import commands
 from bot_utils import load_extension_directory, load_prefixes, prefix_operator
 
@@ -28,7 +29,10 @@ from bot_utils import load_extension_directory, load_prefixes, prefix_operator
 
 logging.info('Using `{}` as default command token.'.format(PREFIX))
 load_prefixes()
-bot = commands.Bot(command_prefix=prefix_operator)
+#intents = Intents(messages=True, guilds=True, members=True, bans=True, emojis=True, webhooks=True, reactions=True)
+intents = Intents.default()
+intents.members = True
+bot = commands.Bot(command_prefix=prefix_operator, intents=intents)
 
 
 # load the extensions
@@ -46,4 +50,4 @@ if '-c' in sys.argv:
     import code
     code.interact(local=dict(globals(), **locals()))
 else:
-    bot.run(CONFIG['discord_client_secret'])
+    bot.run(TOKEN)
