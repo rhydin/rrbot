@@ -14,10 +14,21 @@ services:
     ports:
       - "0.0.0.0:3306:3306"
     volumes:
-      - ./.data:/var/lib/mysql
+      - ./.data/mysql:/var/lib/mysql
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: garbage_collection
       MYSQL_DATABASE: rrbot
       MYSQL_USER: rrbot
       MYSQL_PASSWORD: rrbot
+
+  mqtt:
+    image: eclipse-mosquitto
+    ports:
+      - "0.0.0.0:1883:1883"
+      - "0.0.0.0:9001:9001"
+    volumes:
+      - ./.mosquitto.conf:/mosquitto/config/mosquitto.conf
+      - ./.data/mosquitto:/mosquitto/data
+      - ./logs/mosquitto:/mosquitto/log 
+    restart: always

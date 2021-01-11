@@ -1,6 +1,7 @@
 **.sw*
 **/tmp
-**/logs/*.log
+**/logs/**.log
+**/logs/**/
 **/__pycache__
 configuration.py
 /.data
