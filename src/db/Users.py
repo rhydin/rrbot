@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, Boolean, BigInteger, String, JSON
+from sqlalchemy import Column, Boolean, BigInteger, String, JSON
 from . import Base
 
 class Users(Base):

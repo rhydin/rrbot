@@ -23,10 +23,8 @@ default_command_prefix: '='
 admins:
   - 290829729458814977 # Q
   - 376200817054842882 # Babs
-  - 610335542780887050 # Midnight
   - 158406380162646016 # Omnilord
   - 250138180718821376 # Hellz
-  - 715057045211971685 # Aten
 mod_roles:
   - 694253939734085732 # @staff
 log_level: 'INFO'

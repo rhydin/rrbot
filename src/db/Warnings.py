@@ -1,4 +1,4 @@
-from sqlalchemy import ForeignKey, Column, BigInteger, Boolean, Text
+from sqlalchemy import Column, BigInteger, Boolean, Text
 from . import Base
 
 class Warnings(Base):

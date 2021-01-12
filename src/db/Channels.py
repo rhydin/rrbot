@@ -1,5 +1,5 @@
-from sqlalchemy import ForeignKey, Column, Boolean, BigInteger, String, JSON, event
-from . import Base, prefixed, bot_session
+from sqlalchemy import Column, Boolean, BigInteger, String, JSON, event
+from . import Base, prefixed
 from configuration import update_live_prefix
 
 @prefixed
