@@ -2,7 +2,8 @@ import os, sys, logging
 from configuration import ADMINS, PREFIXES, PREFIX
 from discord.ext import commands
 from pathlib import Path
-from db import Session, bot_session, Servers, Channels
+from db import Session, bot_session, Servers, Channels, Users, Roles
+from functools import wraps
 
 """
 Core utlities
@@ -41,6 +42,23 @@ def prefix_operator(bot, message):
 Auxiliary utiltizes
 """
 
+def _is_server_moderator(d_user):
+    user_id = d_user.id
+
+    if _is_bot_admin(user_id):
+        return True
+
+    user = bot_session.query(Users).filter(Users.id == user_id).first()
+    if user is not None and user.moderator:
+        return True
+
+    for urole in d_user.roles:
+        modrole = bot_session.query(Roles).filter(Roles.id == urole.id).first()
+        if modrole is not None and modrole.moderator:
+            return True
+
+    return False
+
 def _is_bot_admin(user_id):
     return user_id in ADMINS
 
@@ -52,11 +70,44 @@ def is_bot_admin():
         return _is_bot_admin(ctx.message.author)
     return commands.check(predicate)
 
-def db_session():
-    """
-    wrapper a command context in a database session
-    """
-    def predicate(ctx):
-        ctx.db = Session()
-        return True
-    return commands.check(predicate)
+def _db_session(ctx):
+    ctx.db = Session()
+
+def cmd_db_wrapper(fn):
+    def _cmd_db_wrapper(fn):
+        """
+        wrapper to inject a command context with a database session
+        """
+        @wraps(fn)
+        async def predicate(ctx, *args, **kwargs):
+            try:
+                _db_session(ctx)
+                return await fn(ctx, *args, **kwargs)
+            except SQLAlchemyError:
+                if db_errors_silent == False:
+                    await ctx.send('DB Error.')
+            finally:
+                ctx.db.close()
+        return predicate
+    return _cmd_db_wrapper
+
+def cog_db_wrapper(fn):
+    def _cog_db_wrapper(fn):
+        """
+        wrapper to inject a cog command context with a database session
+        """
+        @wraps(fn)
+        async def predicate(self, ctx, *args, **kwargs):
+            try:
+                _db_session(ctx)
+                return await fn(self, ctx, *args, **kwargs)
+            except SQLAlchemyError:
+                if db_errors_silent == False:
+                    await ctx.send('DB Error.')
+            finally:
+                ctx.db.close()
+        return predicate
+    return _cog_db_wrapper
+
+def db_session(cog=False, db_errors_silent=True):
+    return cog_db_wrapper(db_errors_silent) if cog else cmd_db_wrapper(db_errors_silent)

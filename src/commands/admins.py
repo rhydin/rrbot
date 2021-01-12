@@ -24,7 +24,7 @@ class AdminCog(commands.Cog, name='Bot Administrator Commands'):
         await ctx.bot.logout()
 
     @commands.command(aliases=['sprefix'])
-    @db_session()
+    @db_session(cog=True)
     async def prefix(self, ctx, prefix):
         server = ensure_server(ctx.db, ctx.guild.id)
         server.prefix = prefix
@@ -33,7 +33,7 @@ class AdminCog(commands.Cog, name='Bot Administrator Commands'):
         await ctx.send('Server prefix is now {}'.format(prefix))
 
     @commands.command()
-    @db_session()
+    @db_session(cog=True)
     async def cprefix(self, ctx, prefix):
         channel = ensure_channel(ctx.db, ctx.channel.id)
         channel.prefix = prefix
